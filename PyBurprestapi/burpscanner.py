@@ -11,10 +11,11 @@ from . import __version__ as version
 
 
 class BurpApi(object):
-    def __init__(self, host, key, timeout=60, user_agent=None, client_version=version):
+    def __init__(self, host, key, verify_ssl=True, timeout=60, user_agent=None, client_version=version):
 
         self.host = host
         self.key = key
+        self.verify_ssl = verify_ssl
         self.timeout = timeout
         self.client_version = client_version
 
@@ -22,6 +23,9 @@ class BurpApi(object):
             self.user_agent = 'PyBurprestapi/' + version
         else:
             self.user_agent = user_agent
+        
+        if not self.verify_ssl:
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     '''
     Burp Professional V2.0.x new API 
@@ -64,6 +68,7 @@ class BurpApi(object):
             }
             if method == 'POST' or method == 'PUT':
                 headers.update({'Content-Type': 'application/json'})
+             headers.update({'User-Agent': self.user_agent})
         try:
             response = requests.request(method=method, url=self.host + self.key + url, params=params,
                                         headers=headers, data=data)
