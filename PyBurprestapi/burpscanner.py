@@ -44,8 +44,12 @@ class BurpApi(object):
 
         :return:
         """
+        json_data = dict(
+             {
+             }
+        )
 
-        return self._request('POST', '/v0.1/scan', data=data)
+        return self._request('POST', '/v0.1/scan', json=json_data)
 
     def scan_info(self, scan_id):
         """
@@ -56,7 +60,7 @@ class BurpApi(object):
 
         return self._request('GET', '/v0.1/scan/%s' % scan_id)
 
-    def _request(self, method, url, params=None, headers=None, data=None):
+    def _request(self, method, url, params=None, headers=None, json=None, data=None):
         """Common handler for all the HTTP requests."""
         if not params:
             params = {}
@@ -88,7 +92,7 @@ class BurpApi(object):
 
                 response_headers = response.headers
 
-                return BurpResponse(success=success, response_code=response_code, data=data,
+                return BurpResponse(success=success, response_code=response_code, json=json_data, data=data,
                                     response_headers=response_headers)
             except ValueError as e:
                 return BurpResponse(success=False, message="JSON response could not be decoded {}.".format(e))
